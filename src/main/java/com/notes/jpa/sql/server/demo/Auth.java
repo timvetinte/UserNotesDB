@@ -1,0 +1,89 @@
+package com.notes.jpa.sql.server.demo;
+
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.Scanner;
+
+@Service
+public class Auth{
+
+    @Autowired
+    userRepo repo;
+    //@Autowired
+    //Menu menu;
+
+
+    public void register() {
+        Scanner scanner = new Scanner(System.in);
+        User currentUser = null;
+        User newUser = new User();
+
+        System.out.println("Enter username:");
+        String username = scanner.nextLine();
+
+        Optional<User> optionalUser = repo.findByUsername(username);
+
+        if (optionalUser.isPresent()) {
+
+            System.out.println("User already exists");
+
+        } else {
+            newUser.setUsername(username);
+            System.out.println("Enter a password:");
+            String password = scanner.nextLine();
+
+            System.out.println("Enter password again");
+
+            String password2 = scanner.nextLine();
+
+            if(password.equals(password2)) {
+
+                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+                newUser.setPassword(hashedPassword);
+                System.out.println("User created " + newUser.getUsername());
+                newUser.setRole("USER");
+                repo.save(newUser);
+
+            } else {
+                System.out.println("Passwords did not match try again");
+            }
+
+        }
+    }
+
+    public User login() {
+        Scanner scanner = new Scanner(System.in);
+        User currentUser = null;
+
+        System.out.println("Enter username:");
+        String username = scanner.nextLine();
+
+        Optional<User> optionalUser = repo.findByUsername(username);
+
+            if (optionalUser.isPresent()){
+                currentUser = optionalUser.get();
+
+                System.out.println("User found");
+                System.out.println("Enter Password:");
+
+                String password = scanner.nextLine();
+
+                if (BCrypt.checkpw(password, currentUser.getPassword())){
+                    System.out.println("Correct Password!!!");
+                    //menu.current= Menu.State.USER_MENU;'
+                } else {
+                    System.out.println("Incorrect password");
+                }
+
+
+            } else {
+                System.out.println("User does not exist");
+            }
+            return currentUser;
+        }
+
+}
