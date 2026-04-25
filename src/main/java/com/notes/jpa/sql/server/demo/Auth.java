@@ -12,8 +12,7 @@ public class Auth{
 
     @Autowired
     userRepo repo;
-    //@Autowired
-    //Menu menu;
+
 
 
     public void register() {
@@ -74,7 +73,6 @@ public class Auth{
 
                 if (BCrypt.checkpw(password, currentUser.getPassword())){
                     System.out.println("Correct Password!!!");
-                    //menu.current= Menu.State.USER_MENU;'
                 } else {
                     System.out.println("Incorrect password");
                 }
