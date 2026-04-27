@@ -13,15 +13,23 @@ public class Auth{
     @Autowired
     userRepo repo;
 
-
-
     public void register() {
         Scanner scanner = new Scanner(System.in);
-        User currentUser = null;
+
+        String username;
+        String password;
+
         User newUser = new User();
 
-        System.out.println("Enter username:");
-        String username = scanner.nextLine();
+        while(true) {
+            System.out.println("Enter username:");
+            username = scanner.nextLine();
+            if (!username.isEmpty()){
+                break;
+            } else {
+                System.out.println("Username can not be blank.");
+            }
+        }
 
         Optional<User> optionalUser = repo.findByUsername(username);
 
@@ -31,8 +39,16 @@ public class Auth{
 
         } else {
             newUser.setUsername(username);
-            System.out.println("Enter a password:");
-            String password = scanner.nextLine();
+
+            while(true) {
+                System.out.println("Enter a password:");
+                password = scanner.nextLine();
+                if (!password.isEmpty()){
+                    break;
+                } else {
+                    System.out.println("Password cant be blank");
+                }
+            }
 
             System.out.println("Enter password again");
 
@@ -76,7 +92,6 @@ public class Auth{
                 } else {
                     System.out.println("Incorrect password");
                 }
-
 
             } else {
                 System.out.println("User does not exist");

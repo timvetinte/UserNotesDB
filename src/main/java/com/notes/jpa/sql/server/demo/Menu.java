@@ -197,6 +197,7 @@ public class Menu {
     public void startStateMachine() {
         User currentUser = new User();
         Notes currentNote = new Notes();
+
         while (true) {
             switch (current) {
                 case MAIN_MENU -> currentUser = mainMenu();
