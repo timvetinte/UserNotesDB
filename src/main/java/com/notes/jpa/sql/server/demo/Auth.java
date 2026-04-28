@@ -35,7 +35,7 @@ public class Auth{
 
         if (optionalUser.isPresent()) {
 
-            System.out.println("User already exists");
+            System.out.println("User with the name " + username + " already exists");
 
         } else {
             newUser.setUsername(username);
@@ -91,10 +91,12 @@ public class Auth{
                     System.out.println("Correct Password!!!");
                 } else {
                     System.out.println("Incorrect password");
+                    currentUser = null;
                 }
 
             } else {
                 System.out.println("User does not exist");
+
             }
             return currentUser;
         }
