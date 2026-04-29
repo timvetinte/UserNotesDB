@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 @RestController
@@ -33,15 +34,17 @@ public class Menu {
         System.out.println("Current user: " + currentUser.getUsername());
         System.out.println("1. to View Notes 2. to Change Password 3. to Log Out");
 
-        int choice = scanner.nextInt();
 
-        switch (choice) {
+
+
+        switch (intInput()) {
             case 1 -> current = State.VIEW_NOTES;
             case 2 -> changePassword(currentUser);
             case 3 -> {
                 System.out.println("Logged out");
                 current = State.MAIN_MENU;
             }
+            default -> System.out.println("Invalid choice");
 
         }
 
@@ -53,18 +56,17 @@ public class Menu {
 
         while (true) {
             System.out.println("1. Login \n2. Register \n3. Quit");
-            Scanner scanner = new Scanner(System.in);
-            String choice = scanner.nextLine();
-            switch (choice) {
-                case "1" -> {
+            switch (intInput()) {
+                case 1 -> {
                     currentUser = auth.login();
                     if (currentUser != null) {
                         current = State.USER_MENU;
                         return currentUser;
                     }
                 }
-                case "2" -> auth.register();
-                case "3" -> System.exit(0);
+                case 2 -> auth.register();
+                case 3 -> System.exit(0);
+                default -> System.out.println("Invalid choice");
 
             }
         }
@@ -113,25 +115,29 @@ public class Menu {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter new password: ");
             String password1 = scanner.nextLine();
-            System.out.print("Enter password again: ");
-            String password2 = scanner.nextLine();
-            if (password1.equals(password2)) {
+            if (!password1.isEmpty()) {
+                System.out.print("Enter password again: ");
+                String password2 = scanner.nextLine();
+                if (password1.equals(password2)) {
 
-                String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
-                currentUser.setPassword(hashedPassword);
+                    String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
+                    currentUser.setPassword(hashedPassword);
 
-                uRepo.save(currentUser);
-                System.out.println("Password set!");
-                break;
+                    uRepo.save(currentUser);
+                    System.out.println("Password set!");
+                    break;
+
+                } else {
+                    System.out.println("Passwords did not match, try again");
+                }
             } else {
-                System.out.println("Passwords did not match, try again");
+                System.out.println("Password cannot be blank");
             }
         }
         startMenu(currentUser);
     }
 
     public Notes selectNote(User currentUser) {
-        Scanner scanner = new Scanner(System.in);
 
         ArrayList<Notes> noteList;
 
@@ -142,7 +148,7 @@ public class Menu {
         }
 
         System.out.println("Enter note number to edit or " + (noteList.size() + 1) + ". to Add Note " + (noteList.size() + 2) + ". to Exit");
-        int choice = scanner.nextInt();
+        int choice = intInput();
 
         if (choice == noteList.size() + 1) {
             createNote(currentUser);
@@ -181,17 +187,29 @@ public class Menu {
         System.out.print("Rewrite note: ");
         String noteText = scanner.nextLine();
         System.out.println("1. Save Note 2. Discard Changes 3. Delete Note");
-        int choice = scanner.nextInt();
-        switch (choice) {
+        switch (intInput()) {
             case 1 -> {
                 currentNote.setNotetext(noteText);
                 nRepo.save(currentNote);
             }
             case 2 -> System.out.println("Changes discarded");
             case 3 -> nRepo.delete(currentNote);
+            default -> System.out.println("Invalid choice");
 
         }
         current = State.VIEW_NOTES;
+    }
+
+    public int intInput(){
+        while(true) {
+            try {
+                Scanner scanner = new Scanner(System.in);
+                int choice = scanner.nextInt();
+                return choice;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input");
+            }
+        }
     }
 
     public void startStateMachine() {
