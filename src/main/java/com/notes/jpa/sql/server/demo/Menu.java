@@ -29,12 +29,9 @@ public class Menu {
 
     public void startMenu(User currentUser) {
 
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Current user: " + currentUser.getUsername());
         System.out.println("1. to View Notes 2. to Change Password 3. to Log Out");
-
-
 
 
         switch (intInput()) {
@@ -200,12 +197,11 @@ public class Menu {
         current = State.VIEW_NOTES;
     }
 
-    public int intInput(){
-        while(true) {
+    public int intInput() {
+        while (true) {
             try {
                 Scanner scanner = new Scanner(System.in);
-                int choice = scanner.nextInt();
-                return choice;
+                return scanner.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input");
             }

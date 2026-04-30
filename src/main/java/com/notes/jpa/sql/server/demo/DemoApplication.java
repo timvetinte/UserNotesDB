@@ -12,14 +12,13 @@ public class DemoApplication implements CommandLineRunner {
 
     @Autowired
     userRepo uRepo;
-	@Autowired
-	Menu menu;
+    @Autowired
+    Menu menu;
 
 
     @Override
     public void run(String... args) {
         System.out.print("-----");
-
 
 
         if (uRepo.findByUsername("ADMIN").isEmpty()) {
@@ -35,13 +34,13 @@ public class DemoApplication implements CommandLineRunner {
         }
 
         System.out.println("------");
-    menu.startStateMachine();
+        menu.startStateMachine();
 
     }
 
 
     static void main(String[] args) {
         System.out.print("---");
-            SpringApplication.run(DemoApplication.class, args);
+        SpringApplication.run(DemoApplication.class, args);
     }
 }
